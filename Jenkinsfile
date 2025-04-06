@@ -19,10 +19,5 @@ pipeline {
                 echo 'run container'
             }
         }
-        stage('log') { 
-            steps {
-                echo 'check logs'
-            }
-        }
     }
 }
