@@ -1,45 +1,44 @@
 pipeline {
     agent {
-        label 'ec2-agent'
+        label 'ec2-agent-01'
     }
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('docker-hub')
-        DOCKER_IMAGE = "haingyen/myrepo"
-        DOCKER_TAG = "latest"
+        DOCKER_IMAGE     = "haingyen/myrepo"
+        DOCKER_IMAGE_TAG = "latest"
     }
 
     stages {
-        stage('info') { 
+        stage('Checkout') {
             steps {
-                sh(script: """ whoami;pwd;ls -alt """, label: "first stage")
+                git branch: 'main', url: 'https://github.com/haingyen/test.git'
             }
         }
-        stage('Build Docker Image') {
+
+        stage('Build image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}")
                 }
             }
         }
-        stage('Push to Docker Hub') {
+         stage('Push on Dockerhub') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-token') {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}").push()
                     }
                 }
             }
         }
-        stage('deploy') { 
-            steps {
-                echo 'run container'
-            }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
         }
-        stage('log') { 
-            steps {
-                echo 'check logs'
-            }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
