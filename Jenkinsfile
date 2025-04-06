@@ -23,18 +23,19 @@ pipeline {
                         usernameVariable: 'DOCKER_HUB_USER'
                     )]) {
                         sh('echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USER --password-stdin')
+                        sh('docker push $IMAGE_NAME:$TAG')
                     }
                 }
             }
         }
-        stage('Push') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-token') {
-                        docker.image("${IMAGE_NAME}:${TAG}").push()
-                    }
-                }
-            }
-        }
+        // stage('Push') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-token') {
+        //                 docker.image("${IMAGE_NAME}:${TAG}").push()
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
