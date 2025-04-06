@@ -3,18 +3,35 @@ pipeline {
         label 'ec2-agent'
     }
 
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
+        DOCKER_IMAGE = "haingyen/myrepo"
+        DOCKER_TAG = "latest"
+    }
+
     stages {
         stage('info') { 
             steps {
                 sh(script: """ whoami;pwd;ls -alt """, label: "first stage")
             }
         }
-         stage('build and push') { 
+        stage('Build Docker Image') {
             steps {
-                echo 'build via docker and push image on dockerhub'
+                script {
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                }
             }
         }
-         stage('deploy') { 
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+                    }
+                }
+            }
+        }
+        stage('deploy') { 
             steps {
                 echo 'run container'
             }
