@@ -2,43 +2,39 @@ pipeline {
     agent {
         label 'ec2-agent-01'
     }
-
     environment {
-        DOCKER_IMAGE     = "haingyen/myrepo"
-        DOCKER_IMAGE_TAG = "latest"
+        IMAGE_NAME = 'haingyen/myrepo'
+        TAG = 'latest'
     }
-
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/haingyen/test.git'
-            }
-        }
-
-        stage('Build image') {
+        stage('Build') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}")
+                    docker.build("${IMAGE_NAME}:${TAG}")
                 }
             }
         }
-         stage('Push on Dockerhub') {
+        stage('Login') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com/v2/', 'docker-hub-token') {
-                        docker.image("${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}").push()
+                    withCredentials([usernamePassword(
+                        credentialsId: 'docker-hub-token',
+                        passwordVariable: 'DOCKER_HUB_PASSWORD',
+                        usernameVariable: 'DOCKER_HUB_USER'
+                    )]) {
+                        sh "echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USER --password-stdin"
                     }
                 }
             }
         }
-    }
-
-    post {
-        success {
-            echo 'Pipeline executed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
+        stage('Push') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-token') {
+                        docker.image("${IMAGE_NAME}:${TAG}").push()
+                    }
+                }
+            }
         }
     }
 }
