@@ -3,6 +3,8 @@ pipeline {
         label 'ec2-agent'
     }
 
+    environment {}
+
     stages {
         stage('info') { 
             steps {
