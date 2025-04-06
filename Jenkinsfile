@@ -25,7 +25,7 @@ pipeline {
          stage('Push on Dockerhub') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-token') {
+                    docker.withRegistry('https://registry.hub.docker.com/v2/', 'docker-hub-token') {
                         docker.image("${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}").push()
                     }
                 }
