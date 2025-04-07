@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        any
-    }
+    agent any
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-token')
         IMAGE_NAME = 'haingyen/myrepo'
