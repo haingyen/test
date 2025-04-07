@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Login') {
             steps {
-                sh('echo $DOCKERHUB_CREDENTIALS_PASSWORD | docker login --username $DOCKERHUB_CREDENTIALS_USER --password-stdin')
+                sh('echo $DOCKERHUB_CREDENTIALS | docker login --username $DOCKERHUB_CREDENTIALS --password-stdin')
             }
         }
         stage('Push') {
