@@ -1,41 +1,32 @@
 pipeline {
     agent {
-        label 'ec2-agent-01'
+        any
     }
     environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-token')
         IMAGE_NAME = 'haingyen/myrepo'
-        TAG = 'latest'
+        TAG = '1.0.0'
     }
     stages {
         stage('Build') {
             steps {
-                script {
-                    docker.build("${IMAGE_NAME}:${TAG}")
-                }
+                sh('docker build -t $IMAGE_NAME:$TAG .')
             }
         }
         stage('Login') {
             steps {
-                script {
-                    withCredentials([usernamePassword(
-                        credentialsId: 'docker-hub-token',
-                        passwordVariable: 'DOCKER_HUB_PASSWORD',
-                        usernameVariable: 'DOCKER_HUB_USER'
-                    )]) {
-                        sh('echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USER --password-stdin')
-                        sh('docker push $IMAGE_NAME:$TAG')
-                    }
-                }
+                sh('echo $DOCKERHUB_CREDENTIALS_PASSWORD | docker login --username $DOCKERHUB_CREDENTIALS_USER --password-stdin')
             }
         }
-        // stage('Push') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-token') {
-        //                 docker.image("${IMAGE_NAME}:${TAG}").push()
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Push') {
+            steps {
+                sh('docker push $IMAGE_NAME:$TAG')
+            }
+        }
+    }
+    post {
+        always {
+            sh('docker logout')
+        }
     }
 }
