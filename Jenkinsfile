@@ -12,7 +12,7 @@ pipeline {
                 }
             }
         }
-        stage('Login') {
+        stage('Login anh Push') {
             steps {
                 script {
                     withCredentials([usernamePassword(
@@ -20,19 +20,20 @@ pipeline {
                         passwordVariable: 'DOCKER_HUB_PASSWORD',
                         usernameVariable: 'DOCKER_HUB_USER'
                     )]) {
-                        sh "echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USER --password-stdin"
+                        sh('echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USER --password-stdin')
+                        sh('docker push $IMAGE_NAME:$TAG')
                     }
                 }
             }
         }
-        stage('Push') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image("${IMAGE_NAME}:${TAG}").push()
-                    }
-                }
-            }
-        }
+        // stage('Push') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+        //                 docker.image("${IMAGE_NAME}:${TAG}").push()
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
