@@ -2,7 +2,8 @@ pipeline {
     agent any
     environment {
         IMAGE_NAME = 'haingyen/myrepo'
-        TAG = '1.0.0'
+        TAG = '2.0.0'
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-token')
     }
     stages {
         stage('Build') {
@@ -12,20 +13,18 @@ pipeline {
                 }
             }
         }
-        stage('Login anh Push') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(
-                        credentialsId: 'docker-hub-credentials',
-                        passwordVariable: 'DOCKER_HUB_PASSWORD',
-                        usernameVariable: 'DOCKER_HUB_USER'
-                    )]) {
-                        sh('echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USER --password-stdin')
-                        sh('docker push $IMAGE_NAME:$TAG')
-                    }
-                }
+        stage('Push to Docker Hub') {
+    steps {
+        script {
+            withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_HUB_TOKEN')]) {
+                sh """
+                    docker login -u haingyen -p ${DOCKER_HUB_TOKEN}
+                    docker push ${IMAGE_NAME}:${TAG}
+                """
             }
         }
+    }
+}
         // stage('Push') {
         //     steps {
         //         script {
