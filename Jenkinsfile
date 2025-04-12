@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'ec2-agent'
+    }
     environment {
         IMAGE_NAME = 'haingyen/myrepo'
         TAG = '3.0.0'
@@ -24,7 +26,16 @@ pipeline {
                     }
                 }
             }
-}
+        }
+        stage('write text file') {
+            steps {
+                script {
+                    sh """
+                        echo 'jenkin, github and docker' > test.txt
+                    """
+                }
+            }
+        }
         // stage('Push') {
         //DOCKER_HUB_TOKEN
         //     steps {
