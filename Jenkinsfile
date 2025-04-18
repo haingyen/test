@@ -17,12 +17,9 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_HUB_CREDENTIALS')]) {
-                        sh """
-                            docker login -u haingyen -p ${DOCKER_HUB_CREDENTIALS}
-                            docker push ${IMAGE_NAME}:${TAG}
-                        """
+                 script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-token') {
+                        docker.image("${IMAGE_NAME}:${TAG}").push()
                     }
                 }
             }
