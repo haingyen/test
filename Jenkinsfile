@@ -5,7 +5,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'haingyen/myrepo'
         TAG = '3.0.0'
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-token')
+        // DOCKER_HUB_CREDENTIALS = credentials('dockerhub-token')
     }
     stages {
         stage('Build') {
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        echo 'jenkin, github and docker' > test.txt
+                        echo 'test...' > test.txt
                     """
                 }
             }
