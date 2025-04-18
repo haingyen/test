@@ -16,13 +16,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/haingyen/test.git'
             }
         }
-        
-        stage('Build') {
-            steps {
-                sh "docker build -t ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} ."
-            }
-        }
-        
+
         stage('Login to Docker Hub') {
             steps {
                 withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_HUB_TOKEN')]) {
@@ -33,6 +27,14 @@ pipeline {
                 }
             }
         }
+        
+        stage('Build') {
+            steps {
+                sh "docker build -t ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} ."
+            }
+        }
+        
+        
         
         stage('Push Image to Docker Hub') {
             steps {
