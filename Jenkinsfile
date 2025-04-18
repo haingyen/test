@@ -16,14 +16,6 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/haingyen/test.git'
             }
         }
-
-        stage('Setup Buildx') {
-            steps {
-                sh '''
-                    docker buildx create --use --name mybuilder
-                '''
-            }
-        }
         
         stage('Build') {
             steps {
