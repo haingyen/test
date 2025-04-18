@@ -20,7 +20,6 @@ pipeline {
         stage('Setup Buildx') {
             steps {
                 sh '''
-                    docker buildx install
                     docker buildx create --use --name mybuilder
                 '''
             }
