@@ -20,6 +20,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        docker buildx install
                         docker buildx create --use
                         docker buildx build \
                             -t ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} \
