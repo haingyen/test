@@ -4,7 +4,7 @@ pipeline {
     }
     environment {
         IMAGE_NAME = 'haingyen/myrepo'
-        TAG = '4.0.0'
+        TAG = '5.0.0'
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub-token')
     }
     stages {
@@ -17,9 +17,12 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-token') {
-                        docker.image("${IMAGE_NAME}:${TAG}").push()
+                script {
+                    withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_HUB_CREDENTIALS')]) {
+                        sh """
+                            docker login -u haingyen -p ${DOCKER_HUB_CREDENTIALS}
+                            docker push ${IMAGE_NAME}:${TAG}
+                        """
                     }
                 }
             }
