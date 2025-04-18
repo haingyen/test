@@ -19,7 +19,7 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'docker buildx build ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} .'
+                sh "docker buildx build -t ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} ."
             }
         }
         
