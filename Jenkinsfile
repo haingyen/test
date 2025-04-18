@@ -16,17 +16,19 @@ pipeline {
             }
         }
         
-        stage('Build Docker Image') {
+        stage('Build with Buildx') {
             steps {
                 script {
-                    // Build image từ Dockerfile
-                    sh "DOCKER_BUILDKIT=1 docker build -t ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} ."
-                    
-                    // Tag thêm nếu cần
-                    sh "docker tag ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} ${DOCKER_HUB_REPO}:${env.BUILD_NUMBER}"
+                    sh '''
+                        docker buildx create --use
+                        docker buildx build \
+                            -t ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} \
+                            --platform linux/amd64 \
+                            --load .
+                    '''
                 }
-            }
-        }
+    }
+}
         
         stage('Login to Docker Hub') {
             steps {
