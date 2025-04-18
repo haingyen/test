@@ -7,6 +7,7 @@ pipeline {
         DOCKER_HUB_USER = "haingyen"
         DOCKER_HUB_REPO = "${DOCKER_HUB_USER}/myrepo"
         DOCKER_IMAGE_TAG = "6.0.0"
+        DOCKER_BUILDKIT = "1"
     }
     
     stages {
@@ -15,21 +16,21 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/haingyen/test.git'
             }
         }
-        
-        stage('Build with Buildx') {
+
+        stage('Setup Buildx') {
             steps {
-                script {
-                    sh '''
-                        docker buildx install
-                        docker buildx create --use
-                        docker buildx build \
-                            -t ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} \
-                            --platform linux/amd64 \
-                            --load .
-                    '''
-                }
-    }
-}
+                sh '''
+                    docker buildx install
+                    docker buildx create --use --name mybuilder
+                '''
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'docker buildx build -t ${DOCKER_HUB_REPO}:${DOCKER_IMAGE_TAG} --platform linux/amd64 --load .'
+            }
+        }
         
         stage('Login to Docker Hub') {
             steps {
