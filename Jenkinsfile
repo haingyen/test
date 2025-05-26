@@ -2,7 +2,6 @@ pipeline {
     agent any
     
     environment {
-        KUBE_CONFIG = credentials('kubeconfig')
         DEPLOYMENT_NAME = 'nginx-deployment'
         NAMESPACE = 'default'
     }
@@ -15,10 +14,9 @@ pipeline {
         }
         stage('Deploy to Minikube') {
             steps {
-                script {
-                    // Áp dụng các file cấu hình Kubernetes
-                    sh "kubectl apply -f deployment.yaml --kubeconfig=${KUBE_CONFIG}"
-                    // sh "kubectl apply -f service.yaml --kubeconfig=${KUBE_CONFIG}"
+                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                     // Thực thi kubectl
+                    sh 'kubectl apply -f deployment.yaml --kubeconfig=$KUBECONFIG'
                 }
             }
         }

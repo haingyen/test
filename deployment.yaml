@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: test
-        image: haingyen/myrepo:latest
+        image: nginx
         ports:
         - containerPort: 80
