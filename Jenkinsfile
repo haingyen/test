@@ -41,10 +41,21 @@ pipeline {
                 sh '''
                     echo 'Install Argocd CLI'
                     curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-                    sudo apt install -y argocd-linux-amd64
+                    apt install -y argocd-linux-amd64
                     chmod +x /usr/local/bin/argocd
                 '''
             }
         }
+        stage('Apply Kubernetes Manifests & Sync App with ArgoCD'){
+			steps {
+				script {
+					kubeconfig(credentialsId: 'kubeconfig', serverUrl: 'https://127.0.0.1:51475') {
+    					sh '''
+						    argocd login https://localhost:32187/ --username admin --password $(kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | ForEach-Object { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }) --insecure
+						'''
+					}	
+				}
+			}
+		}
     }
 }
