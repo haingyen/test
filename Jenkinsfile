@@ -1,51 +1,35 @@
 pipeline {
     agent any
-    tools {
-        nodejs 'nodejs'
-    }
+    
     environment {
-        DOCKER_IMAGES = 'haingyen/myrepo'
-        DOCKER_HUB_CREDENTIALS_ID = 'dockerhub-token'
-        ARGOCD_PASSWORD = credentials('argocd-token')
         KUBE_CONFIG = credentials('kubeconfig')
-        ARGOCD_SERVER = 'https://localhost:32187'
-        ARGOCD_USER = 'admin'
+        DEPLOYMENT_NAME = 'nginx-deployment'
+        NAMESPACE = 'default'
     }
+    
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/haingyen/test.git'
+                git branch: 'main', url: 'https://github.com/your-repo.git'
             }
         }
-        stage('Install Depens') {
-            steps {
-                sh "npm install"
-            }
-        }
-        stage('Build Docker Images') {
+        stage('Deploy to Minikube') {
             steps {
                 script {
-                    echo 'building docker images'
-                    dockerImage = docker.build("${DOCKER_IMAGES}:latest")
+                    // Áp dụng các file cấu hình Kubernetes
+                    sh "kubectl apply -f deployment.yaml --kubeconfig=${KUBE_CONFIG}"
+                    // sh "kubectl apply -f service.yaml --kubeconfig=${KUBE_CONFIG}"
                 }
             }
         }
-        stage('Push Docker Images on Dockerhub') {
+        
+        stage('Verify Deployment') {
             steps {
                 script {
-                    echo 'Push Docker Images on Dockerhub'
-                    docker.withRegistry('https://registry.hub.docker.com', "${DOCKER_HUB_CREDENTIALS_ID}") {
-                        dockerImage.push('latest')
-                    }
+                    sh "kubectl rollout status deployment/${DEPLOYMENT_NAME} --namespace=${NAMESPACE} --kubeconfig=${KUBE_CONFIG}"
+                    sh "kubectl get pods --namespace=${NAMESPACE} --kubeconfig=${KUBE_CONFIG}"
                 }
             }
         }
-        stage('Apply Kubernetes Manifests'){
-			steps {
-				script {
-					sh "kubectl apply -f k8s/deployment.yaml --kubeconfig=${KUBE_CONFIG}"
-				}
-			}
-		}
     }
 }
