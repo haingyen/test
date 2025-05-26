@@ -12,6 +12,13 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/haingyen/test.git'
             }
         }
+        stage('Test Kubernetes') {
+            steps {
+                script {
+                    sh 'kubectl get pods'
+                }
+            }
+        }
         stage('Deploy to Minikube') {
             steps {
                  withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
