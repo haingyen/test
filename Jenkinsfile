@@ -39,11 +39,11 @@ pipeline {
         stage('Apply Kubernetes Manifests & Sync App with ArgoCD'){
 			steps {
 				script {
-					kubeconfig(credentialsId: 'kubeconfig', serverUrl: 'https://127.0.0.1:51475') {
-    					sh '''
-						    argocd login https://localhost:32187/ --username admin --password $(kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | ForEach-Object { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }) --insecure
-						'''
-					}	
+					withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'kubeconfig', namespace: '', restrictKubeConfigAccess: false, serverUrl: 'https://127.0.0.1:51475') {
+                        sh '''
+                            argocd login https://localhost:32187/ --username admin --password $(kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | ForEach-Object { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }) --insecure
+                        '''
+                    }
 				}
 			}
 		}
