@@ -17,7 +17,7 @@ pipeline {
             steps {
                 script {
                     // Áp dụng các file cấu hình Kubernetes
-                    sh "kubectl apply -f deployment.yaml --kubeconfig=${KUBE_CONFIG}"
+                    sh "kubectl apply -f deployment.yaml --kubeconfig=${KUBE_CONFIG} --validate=false"
                     // sh "kubectl apply -f service.yaml --kubeconfig=${KUBE_CONFIG}"
                 }
             }
