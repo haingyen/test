@@ -5,7 +5,7 @@ pipeline {
     }
     environment {
         DOCKER_IMAGES = 'haingyen/myrepo'
-        DOCKERHUB_TOKEN = 'dockerhub-token'
+        DOCKER_HUB_CREDENTIALS_ID = 'dockerhub-token'
     }
     stages {
         stage('Checkout') {
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     echo 'Push Docker Images on Dockerhub'
-                    docker.withRegistry('https://registry.hub.docker.com', "${DOCKERHUB_TOKEN}") {
+                    docker.withRegistry('https://registry.hub.docker.com', "${DOCKER_HUB_CREDENTIALS_ID}") {
                         dockerImage.push('latest')
                     }
                 }
