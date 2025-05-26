@@ -6,6 +6,7 @@ pipeline {
     environment {
         DOCKER_IMAGES = 'haingyen/myrepo'
         DOCKER_HUB_CREDENTIALS_ID = 'dockerhub-token'
+        ARGOCD_TOKEN = 'argocd-token'
     }
     stages {
         stage('Checkout') {
@@ -40,7 +41,7 @@ pipeline {
 			steps {
 				script {
 					withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'kubeconfig', namespace: '', restrictKubeConfigAccess: false, serverUrl: 'https://127.0.0.1:51475') {
-                            sh 'argocd login https://localhost:32187/ --username admin --password $(kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | ForEach-Object { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }) --insecure'
+                            sh 'argocd login https://localhost:32187/ --username admin --password ${ARGOCD_TOKEN} --insecure'
                     }
 				}
 			}
