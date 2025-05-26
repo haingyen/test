@@ -36,16 +36,6 @@ pipeline {
                 }
             }
         }
-        stage('Install Argocd CLI') {
-            steps {
-                sh '''
-                    echo 'Install Argocd CLI'
-                    curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-                    apt install -y argocd-linux-amd64
-                    chmod +x /usr/local/bin/argocd
-                '''
-            }
-        }
         stage('Apply Kubernetes Manifests & Sync App with ArgoCD'){
 			steps {
 				script {
