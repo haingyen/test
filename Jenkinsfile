@@ -3,6 +3,9 @@ pipeline {
     tools {
         nodejs 'nodejs'
     }
+    environment {
+        DOCKER_IMAGES = 'haingyen/myrepo'
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -12,6 +15,12 @@ pipeline {
         stage('Install Depens') {
             steps {
                 sh "npm install"
+            }
+        }
+        stage('Build Docker Images') {
+            steps {
+                echo 'building docker images'
+                docker.build("${DOCKER_IMAGES}:latest")
             }
         }
     }
