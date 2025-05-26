@@ -36,5 +36,14 @@ pipeline {
                 }
             }
         }
+        stage('Install Argocd CLI') {
+            steps {
+                script {
+                    echo 'Install Argocd CLI'
+                    curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+                    chmod +x /usr/local/bin/argocd
+                }
+            }
+        }
     }
 }
