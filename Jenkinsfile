@@ -7,6 +7,7 @@ pipeline {
         DOCKER_IMAGES = 'haingyen/myrepo'
         DOCKER_HUB_CREDENTIALS_ID = 'dockerhub-token'
         ARGOCD_PASSWORD = credentials('argocd-token')
+        KUBE_CONFIG = credentials('kubeconfig')
         ARGOCD_SERVER = 'https://localhost:32187'
         ARGOCD_USER = 'admin'
     }
@@ -39,12 +40,10 @@ pipeline {
                 }
             }
         }
-        stage('Apply Kubernetes Manifests & Sync App with ArgoCD'){
+        stage('Apply Kubernetes Manifests'){
 			steps {
 				script {
-					withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'kubeconfig', namespace: '', restrictKubeConfigAccess: false, serverUrl: 'https://127.0.0.1:51475') {
-                            sh "argocd login ${ARGOCD_SERVER} --username ${ARGOCD_USER} --password ${ARGOCD_PASSWORD} --insecure"
-                    }
+					sh "kubectl apply -f k8s/deployment.yaml --kubeconfig=${KUBE_CONFIG}"
 				}
 			}
 		}
