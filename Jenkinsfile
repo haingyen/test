@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Build Docker Images') {
             steps {
-                scripts {
+                script {
                     echo 'building docker images'
                     docker.build("${DOCKER_IMAGES}:latest")
                 }
