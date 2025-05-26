@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     echo 'building docker images'
-                    docker.build("${DOCKER_IMAGES}:latest")
+                    dockerImage = docker.build("${DOCKER_IMAGES}:latest")
                 }
             }
         }
@@ -31,7 +31,7 @@ pipeline {
                 script {
                     echo 'Push Docker Images on Dockerhub'
                     docker.withRegistry('https://registry.hub.docker.com', "${DOCKERHUB_TOKEN}") {
-                        .push('latest')
+                        dockerImage.push('latest')
                     }
                 }
             }
