@@ -33,10 +33,15 @@ pipeline {
             }
         }
 
-         stage('Push Docker Image to Dockerhub') {
+        stage('Push Docker Image to Dockerhub') {
             steps {
                 sh "docker push ${DOCKER_IMAGE}"
             }
         }
+        stage('Deploy on Server') {
+            steps {
+                    sh "docker run -d --name nodejs-app -p 3000:3000 ${DOCKER_IMAGE}"
+            }
+         }
     }
 }
