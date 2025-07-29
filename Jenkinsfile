@@ -13,10 +13,8 @@ pipeline {
         }
         stage('Builde docker image') {
             steps {
-                script {
-                    echo 'building docker image'
-                    docker.build("${DOCKER_HUB_REPO}:latest")
-                }
+                echo "building docker image"
+                sh "docker build -t ${DOCKER_HUB_REPO}:latest"
             }
         }
     }
