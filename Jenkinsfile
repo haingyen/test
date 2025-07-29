@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'minikube'
+    }
 
     environment {
         DOCKER_HUB_REPO = 'haingyen/test'
