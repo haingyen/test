@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.get('/hello', (req, res) => {
-  res.send('Hello, World! Welcome to HaiNguyen');
+  res.send('Hello, World! Welcome to HaiNguyen test webhook');
 });
 
 app.listen(port, () => {
