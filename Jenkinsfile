@@ -22,5 +22,21 @@ pipeline {
                 sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_HUB_TOKEN')]) {
+                    sh """
+                        # Đăng nhập Docker Hub bằng token
+                        echo \$DOCKER_HUB_TOKEN | docker login -u ${DOCKER_HUB_USER} --password-stdin
+                    """
+                }
+            }
+        }
+
+         stage('Push Docker Image to Dockerhub') {
+            steps {
+                sh "docker push ${DOCKER_IMAGE}"
+            }
+        }
     }
 }
