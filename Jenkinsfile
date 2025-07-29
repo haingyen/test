@@ -4,7 +4,10 @@ pipeline {
     }
 
     environment {
-        DOCKER_HUB_REPO = 'haingyen/test'
+        DOCKER_HUB_USER = "haingyen"
+        DOCKER_REPO = "test"
+        DOCKER_TAG = "0.3"
+        DOCKER_IMAGE = "${DOCKER_HUB_USER}/${DOCKER_REPO}:${DOCKER_TAG}"
     }
     
     stages {
@@ -16,7 +19,7 @@ pipeline {
         stage('Builde docker image') {
             steps {
                 echo "building docker image"
-                sh "docker build -t ${DOCKER_HUB_REPO}:latest"
+                sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
     }
